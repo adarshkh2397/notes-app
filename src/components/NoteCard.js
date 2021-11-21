@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { DeleteOutlined } from "@mui/icons-material";
 import { yellow, green, blue, pink, grey } from "@mui/material/colors";
@@ -27,6 +28,10 @@ const useStyles = makeStyles({
     },
   },
 
+  searched: {
+    backgroundColor: alpha("#81c784", 0.4),
+  },
+
   avatar: {
     backgroundColor: ({ category }) => {
       if (category === "work") {
@@ -47,8 +52,16 @@ const useStyles = makeStyles({
 const NoteCard = (props) => {
   const { id, title, details, category } = props.note;
   const classes = useStyles({ category });
+  let cardClasses;
+  if (props.filteredNotes.includes(props.note)) {
+    //console.log(`Special note with ${title} title found`);
+    cardClasses = `${classes.test} ${classes.searched}`;
+  } else {
+    cardClasses = `${classes.test}`;
+  }
+
   return (
-    <Card elevation={2} className={classes.test}>
+    <Card elevation={2} className={cardClasses}>
       <CardHeader
         action={
           <IconButton onClick={() => props.onDeleteNote(id)}>

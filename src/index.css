@@ -4,6 +4,7 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
 }
 
 .my-masonry-grid {
@@ -24,6 +25,21 @@ body {
   margin-bottom: 30px;
 }
 
-.MuiCardHeader-subheader{
-  font-size: 0.8rem;
+.spinner-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  background: #fefefe;
+  z-index: 9999;
 }
+
+.spinner-container:before {
+  content: "";
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+

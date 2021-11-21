@@ -1,35 +1,23 @@
 import { useState, useCallback, useEffect } from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
 import Notes from "./pages/Notes";
 import Create from "./pages/Create";
-import { deepPurple } from "@mui/material/colors";
 import Layout from "./components/Layout";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#fefefe",
-    },
-    secondary: deepPurple,
-  },
-  typography: {
-    fontFamily: "Quicksand",
-    fontWeightLight: 400,
-    fontWeightRegular: 500,
-    fontWeightMedium: 600,
-    fontWeightBold: 700,
-  },
-});
+import LoadingSpinner from "./UI/LoadingSpinner";
+import { theme } from "./UI/CustomTheme";
+const DOMAIN = process.env.REACT_APP_FIREBASE_DOMAIN;
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+
   const fetchNotesHandler = useCallback(async () => {
+    setIsFetching(true);
     try {
-      const res = await fetch(
-        "https://notes-app-7690e-default-rtdb.firebaseio.com/notes.json"
-      );
+      const res = await fetch(`${DOMAIN}/notes.json`);
 
       if (!res.ok) {
         throw new Error("Something Went Wrong!");
@@ -51,6 +39,7 @@ function App() {
     } catch (error) {
       console.log(error.message);
     }
+    setIsFetching(false);
   }, []);
 
   useEffect(() => {
@@ -58,17 +47,15 @@ function App() {
   }, [fetchNotesHandler]);
 
   const addNoteHandler = async (note) => {
+    setIsFetching(true);
     try {
-      const res = await fetch(
-        "https://notes-app-7690e-default-rtdb.firebaseio.com/notes.json",
-        {
-          method: "POST",
-          body: JSON.stringify(note),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`${DOMAIN}/notes.json`, {
+        method: "POST",
+        body: JSON.stringify(note),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!res.ok) {
         throw new Error("Something Went Wrong!");
@@ -82,12 +69,9 @@ function App() {
 
   const deleteNoteHandler = async (id) => {
     try {
-      const res = await fetch(
-        `https://notes-app-7690e-default-rtdb.firebaseio.com/notes/${id}.json`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`${DOMAIN}/notes/${id}.json`, {
+        method: "DELETE",
+      });
 
       if (!res.ok) {
         throw new Error("Something Went Wrong!");
@@ -99,15 +83,40 @@ function App() {
     fetchNotesHandler();
   };
 
+  const searchHandler = (searched) => {
+    const fNotes = notes.filter(
+      (note) =>
+        (note.category.toLowerCase().includes(searched.toLowerCase()) ||
+          note.title.toLowerCase().includes(searched.toLowerCase())) &&
+        searched.length > 0
+    );
+
+    setFilteredNotes(fNotes);
+  };
+
+  if (isFetching) {
+    return (
+      <div className="spinner-container">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <Layout>
+        <Layout onSearch={searchHandler}>
           <Routes>
             <Route
               exact
               path="/"
-              element={<Notes notes={notes} onDeleteNote={deleteNoteHandler} />}
+              element={
+                <Notes
+                  notes={notes}
+                  onDeleteNote={deleteNoteHandler}
+                  filteredNotes={filteredNotes}
+                />
+              }
             />
             <Route
               path="/create"

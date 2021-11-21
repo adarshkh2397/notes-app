@@ -18,7 +18,11 @@ const Notes = (props) => {
       >
         {props.notes.map((note) => (
           <div key={note.id}>
-            <NoteCard note={note} onDeleteNote={props.onDeleteNote} />
+            <NoteCard
+              note={note}
+              onDeleteNote={props.onDeleteNote}
+              filteredNotes={props.filteredNotes}
+            />
           </div>
         ))}
       </Masonry>
