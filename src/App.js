@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { lazy, Suspense, useState, useCallback, useEffect } from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
 
 import Notes from "./pages/Notes";
-import Create from "./pages/Create";
 import Layout from "./components/Layout";
 import LoadingSpinner from "./UI/LoadingSpinner";
-import { theme } from "./UI/CustomTheme";
+
+const Create = lazy(() => import("./pages/Create"));
+
 const DOMAIN = process.env.REACT_APP_FIREBASE_DOMAIN;
 
 function App() {
@@ -103,8 +103,14 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div className="spinner-container">
+            <LoadingSpinner />
+          </div>
+        }
+      >
         <Layout onSearch={searchHandler}>
           <Routes>
             <Route
@@ -124,8 +130,8 @@ function App() {
             />
           </Routes>
         </Layout>
-      </BrowserRouter>
-    </ThemeProvider>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 

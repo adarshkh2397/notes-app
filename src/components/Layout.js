@@ -1,7 +1,12 @@
+import { useContext } from "react";
 import { makeStyles } from "@mui/styles";
 import { Search, SearchIconWrapper, StyledInputBase } from "../UI/InlineSearch";
 import { Drawer, Typography, AppBar, Toolbar, Avatar } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { ColorModeContext } from "../UI/CustomTheme";
+import IconButton from "@mui/material/IconButton";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { format } from "date-fns";
 
 import MenuItems from "./MenuItems";
@@ -11,7 +16,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => {
   return {
     page: {
-      background: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.light,
       width: "100%",
       padding: theme.spacing(3),
     },
@@ -22,6 +27,7 @@ const useStyles = makeStyles((theme) => {
     },
     drawer: {
       width: drawerWidth,
+      backgroundColor: theme.palette.primary.main,
       flexShrink: 0,
       "& .MuiDrawer-paper": {
         width: drawerWidth,
@@ -44,6 +50,7 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: theme.palette.secondary.light,
     },
     appbar: {
+      backgroundColor: theme.palette.primary.main,
       width: `calc(100% - ${drawerWidth}px)`,
     },
     toolbar: theme.mixins.toolbar,
@@ -83,7 +90,7 @@ const CustomDrawer = (props) => {
 
 const Layout = (props) => {
   const classes = useStyles();
-
+  const { mode, toggleColorMode } = useContext(ColorModeContext);
   const searchNotesHandler = (event) => {
     props.onSearch(event.target.value);
   };
@@ -105,6 +112,9 @@ const Layout = (props) => {
               onChange={searchNotesHandler}
             />
           </Search>
+          <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+            {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
           <Typography>Adarsh</Typography>
           <Avatar src="/pen.png" className={classes.avatar} />
         </Toolbar>
@@ -113,11 +123,6 @@ const Layout = (props) => {
         <MenuItems />
       </CustomDrawer>
       <Children children={props.children} />
-      {/*<Fab
-        aria-label="change theme"
-        size="small"
-        className={classes.fabStyle}
-      ></Fab>*/}
     </div>
   );
 };

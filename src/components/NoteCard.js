@@ -26,6 +26,7 @@ const useStyles = makeStyles({
         return `3px solid ${grey[700]}`;
       }
     },
+    backgroundColor: "transparent",
   },
 
   searched: {

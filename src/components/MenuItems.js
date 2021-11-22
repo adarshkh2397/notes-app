@@ -4,10 +4,13 @@ import { makeStyles } from "@mui/styles";
 import { AddCircleOutlineOutlined, SubjectOutlined } from "@mui/icons-material";
 import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
-const useStyles = makeStyles({
-  active: {
-    backgroundColor: "#f6f6f6",
-  },
+const useStyles = makeStyles((theme) => {
+  return {
+    active: {
+      backgroundColor: theme.palette.secondary.light,
+      color: theme.palette.text.dark,
+    },
+  };
 });
 
 const MenuItems = () => {

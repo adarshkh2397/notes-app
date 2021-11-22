@@ -52,7 +52,7 @@ const Create = (props) => {
       category,
     };
 
-    console.log(note);
+    //console.log(note);
     props.onCreateNote(note);
     setTitle("");
     setDetails("");
