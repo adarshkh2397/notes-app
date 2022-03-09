@@ -36,12 +36,12 @@ const Create = (props) => {
   const formSubmitHandler = (event) => {
     event.preventDefault();
 
-    if (!title || title.length === 0) {
+    if (!title || title.trim().length === 0) {
       setTitleError(true);
       return;
     }
     setTitleError(false);
-    if (!details || details.length === 0) {
+    if (!details || details.trim().length === 0) {
       setDetailsError(true);
       return;
     }
@@ -52,7 +52,6 @@ const Create = (props) => {
       category,
     };
 
-    //console.log(note);
     props.onCreateNote(note);
     setTitle("");
     setDetails("");

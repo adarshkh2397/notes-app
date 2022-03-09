@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { Search, SearchIconWrapper, StyledInputBase } from "../UI/InlineSearch";
 import { Drawer, Typography, AppBar, Toolbar, Avatar } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
 import { ColorModeContext } from "../UI/CustomTheme";
 import IconButton from "@mui/material/IconButton";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
@@ -28,10 +29,10 @@ const useStyles = makeStyles((theme) => {
     drawer: {
       width: drawerWidth,
       backgroundColor: theme.palette.primary.main,
-      flexShrink: 0,
       "& .MuiDrawer-paper": {
         width: drawerWidth,
         boxSizing: "border-box",
+        border: "none",
       },
     },
     fabStyle: {
@@ -51,7 +52,6 @@ const useStyles = makeStyles((theme) => {
     },
     appbar: {
       backgroundColor: theme.palette.primary.main,
-      width: `calc(100% - ${drawerWidth}px)`,
     },
     toolbar: theme.mixins.toolbar,
     date: {
@@ -73,33 +73,49 @@ const Children = (props) => {
   );
 };
 
-const CustomDrawer = (props) => {
-  const { drawer, title } = useStyles();
-
-  return (
-    <Drawer className={drawer} variant="permanent" anchor="left">
-      <div>
-        <Typography className={title} variant="h5">
-          Notify
-        </Typography>
-      </div>
-      {props.children}
-    </Drawer>
-  );
-};
-
 const Layout = (props) => {
   const classes = useStyles();
   const { mode, toggleColorMode } = useContext(ColorModeContext);
   const searchNotesHandler = (event) => {
     props.onSearch(event.target.value);
   };
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawerContent = (
+    <div>
+      <Typography className={classes.title} variant="h5">
+        Notify
+      </Typography>
+    </div>
+  );
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appbar} elevation={0}>
+      <AppBar
+        className={classes.appbar}
+        elevation={0}
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+        }}
+      >
         <Toolbar>
-          <Typography className={classes.date}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            className={classes.date}
+            sx={{ mr: 2, display: { md: "block", xs: "none" } }}
+          >
             {format(new Date(), "do MMMM Y , ccc")}
           </Typography>
           <Search>
@@ -115,13 +131,37 @@ const Layout = (props) => {
           <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
             {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          <Typography>Adarsh</Typography>
           <Avatar src="/pen.png" className={classes.avatar} />
         </Toolbar>
       </AppBar>
-      <CustomDrawer>
+
+      <Drawer
+        className={classes.drawer}
+        variant="temporary"
+        anchor="left"
+        open={mobileOpen}
+        onClick={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: { xs: "block", sm: "none" },
+        }}
+      >
+        {drawerContent}
         <MenuItems />
-      </CustomDrawer>
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        className={classes.drawer}
+        sx={{
+          display: { xs: "none", sm: "block" },
+        }}
+        open
+      >
+        {drawerContent}
+        <MenuItems />
+      </Drawer>
       <Children children={props.children} />
     </div>
   );

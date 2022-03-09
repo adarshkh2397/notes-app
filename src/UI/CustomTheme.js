@@ -51,8 +51,8 @@ export const ColorModeContextProvider = (props) => {
             : {
                 // palette values for dark mode
                 primary: {
-                  light: "#001E3C",
-                  main: "#0A1929",
+                  light: grey[900],
+                  main: grey[800],
                 },
                 divider: "#132F4C",
                 secondary: {
